@@ -1,0 +1,11 @@
+Parameter Name,Annual Goal,Achieved,Remaining Target,Months Completed,Months Remaining,Required Monthly Target,Achievement %,Status
+Production Volume,120000,79700.0,40300.0,8,4,10075.0,66.42,Monitor
+Sales Revenue,6000000,4165000.0,1835000.0,8,4,458750.0,69.42,On Track
+Dealer Addition,60,40.0,20.0,8,4,5.0,66.67,On Track
+Customer Complaints,100,53.0,47.0,8,4,11.75,53.0,Critical
+Safety Observations,240,171.0,69.0,8,4,17.25,71.25,On Track
+Energy Consumption,45000,30340.0,14660.0,8,4,3665.0,67.42,On Track
+Inventory Turnover,8,5.4,2.6,8,4,0.65,67.5,On Track
+OTIF Delivery (%),98,64.0,34.0,8,4,8.5,65.31,Monitor
+Quality Score (%),96,63.0,33.0,8,4,8.25,65.62,Monitor
+Cost Reduction ($),80000,55900.0,24100.0,8,4,6025.0,69.88,On Track

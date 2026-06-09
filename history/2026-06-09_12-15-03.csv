@@ -1,0 +1,11 @@
+Parameter Name,Annual Goal,Achieved,Remaining Target,Months Completed,Months Remaining,Required Monthly Target,Achievement %,Status,Trend
+Production Volume,120000,100.0,119900.0,11,1,119900.0,0.08,Critical,📉 Declining
+Sales Revenue,6000000,1000.0,5999000.0,11,1,5999000.0,0.02,Critical,📉 Declining
+Dealer Addition,60,0.0,60.0,11,1,60.0,0.0,Critical,📉 Declining
+Customer Complaints,100,10000.0,-9900.0,11,1,-9900.0,1.0,Critical,📉 Declining
+Safety Observations,240,0.0,240.0,11,1,240.0,0.0,Critical,📉 Declining
+Energy Consumption,45000,1000000.0,-955000.0,11,1,-955000.0,4.5,Critical,📉 Declining
+Inventory Turnover,8,0.1,7.9,11,1,7.9,1.25,Critical,📉 Declining
+OTIF Delivery (%),98,1.0,97.0,11,1,97.0,1.0,Critical,📉 Declining
+Quality Score (%),96,1.0,95.0,11,1,95.0,1.0,Critical,📉 Declining
+Cost Reduction ($),80000,0.0,80000.0,11,1,80000.0,0.0,Critical,📉 Declining
