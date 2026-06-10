@@ -12,11 +12,14 @@ def generate_ai_recommendations(analysis_df):
 
         kpi_name = str(row.get("Parameter Name", ""))
 
-        try:
-            if status == "Critical":
-                recommendation = "Immediate management review and corrective action required."
-            else:
-                recommendation = "Monitor weekly and implement targeted improvement actions."
+        if status == "Critical":
+            recommendation = (
+                "Immediate management review and corrective action required."
+            )
+        else:
+            recommendation = (
+                "Monitor weekly and implement targeted improvement actions."
+            )
 
         recommendations.append(f"{kpi_name}: {recommendation}")
 
