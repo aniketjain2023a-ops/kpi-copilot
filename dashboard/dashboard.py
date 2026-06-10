@@ -130,6 +130,119 @@ st.markdown(
     h2, h3 {
         text-shadow: 0 0 12px rgba(96,165,250,0.25);
     }
+
+    .jsw-health-banner {
+        background: linear-gradient(90deg,
+            rgba(37,99,235,0.15),
+            rgba(124,58,237,0.15),
+            rgba(249,115,22,0.15));
+        border: 1px solid rgba(96,165,250,0.20);
+        border-radius: 16px;
+        padding: 14px 18px;
+        margin: 12px 0 24px 0;
+        text-align: center;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        backdrop-filter: blur(12px);
+        animation: pulseGlow 4s ease-in-out infinite;
+    }
+
+    .health-strip {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin: 18px 0 24px 0;
+        max-width: 260px;
+    }
+
+    .health-tile {
+        width: 100%;
+        background: rgba(17,24,39,0.75);
+        border: 1px solid rgba(96,165,250,0.15);
+        border-radius: 18px;
+        padding: 18px;
+        text-align: center;
+        backdrop-filter: blur(14px);
+    }
+
+    .health-number {
+        font-size: 28px;
+        font-weight: 700;
+        color: #f4f4f9;
+    }
+
+    .health-label {
+        margin-top: 6px;
+        color: #cbd5e1;
+    }
+
+    .action-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #f4f4f9;
+        margin-bottom: 6px;
+    }
+
+    .action-subtitle {
+        color: #cbd5e1;
+        line-height: 1.5;
+    }
+
+    @keyframes pulseGlow {
+        0% { box-shadow: 0 0 10px rgba(59,130,246,0.15); }
+        50% { box-shadow: 0 0 30px rgba(249,115,22,0.20); }
+        100% { box-shadow: 0 0 10px rgba(59,130,246,0.15); }
+    }
+
+    /* === BEGIN: Dashboard Glass and Futuristic Section Styles === */
+    .dashboard-glass {
+        background: rgba(15,23,42,0.72);
+        border: 1px solid rgba(96,165,250,0.18);
+        border-radius: 22px;
+        padding: 18px;
+        backdrop-filter: blur(18px);
+        box-shadow: 0 0 30px rgba(59,130,246,0.12);
+    }
+
+    .futuristic-section {
+        background: linear-gradient(135deg,
+            rgba(15,23,42,0.90),
+            rgba(17,24,39,0.80));
+        border: 1px solid rgba(96,165,250,0.15);
+        border-radius: 24px;
+        padding: 20px;
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .futuristic-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg,#2563eb,#7c3aed,#f97316);
+    }
+
+    @keyframes neonPulse {
+        0% { box-shadow: 0 0 12px rgba(59,130,246,0.12); }
+        50% { box-shadow: 0 0 28px rgba(249,115,22,0.18); }
+        100% { box-shadow: 0 0 12px rgba(59,130,246,0.12); }
+    }
+
+    div[data-testid="stDataFrame"] {
+        border: 1px solid rgba(96,165,250,0.15);
+        border-radius: 18px;
+        overflow: hidden;
+        animation: neonPulse 5s ease-in-out infinite;
+    }
+
+    div[data-testid="stPlotlyChart"] {
+        animation: neonPulse 5s ease-in-out infinite;
+    }
+    /* === END: Dashboard Glass and Futuristic Section Styles === */
     </style>
     """,
     unsafe_allow_html=True
@@ -142,6 +255,17 @@ st.markdown(
         <p>Real-time KPI Intelligence • SAP Analytics • Executive Decision Support</p>
     </div>
     """,
+    unsafe_allow_html=True
+)
+
+# === Futuristic Section below page title ===
+st.markdown(
+    '''
+    <div class="futuristic-section">
+        <h2 style="margin-bottom:8px;">JSW Paints KPI Intelligence Hub</h2>
+        <p style="color:#cbd5e1;">Real-time performance analytics • AI-powered monitoring • Executive command center</p>
+    </div>
+    ''',
     unsafe_allow_html=True
 )
 
@@ -243,7 +367,9 @@ if not df.empty:
 
     left, right = st.columns([2, 1])
 
+    # --- KPI Performance Chart (glass style) ---
     with left:
+        st.markdown('<div class="dashboard-glass">', unsafe_allow_html=True)
         st.subheader('📈 KPI Performance Command Center')
         fig = px.bar(
             df.sort_values('Achievement', ascending=False),
@@ -253,8 +379,11 @@ if not df.empty:
         fig.update_traces(marker_line_width=0)
         fig.update_layout(height=520, margin=dict(l=20, r=20, t=20, b=80))
         st.plotly_chart(fig, use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
+    # --- Current Status DataFrame (glass style) ---
     with right:
+        st.markdown('<div class="dashboard-glass">', unsafe_allow_html=True)
         st.subheader('🚦 Real-Time KPI Status Matrix')
         st.caption('Live KPI monitoring • AI anomaly detection • Executive alerting')
 
@@ -275,15 +404,17 @@ if not df.empty:
             use_container_width=True,
             hide_index=True
         )
+        st.markdown('</div>', unsafe_allow_html=True)
 
 
-    st.subheader('🎯 KPI Status Distribution')
+    st.subheader('🎯 KPI Health Distribution')
+    st.caption('Executive visibility into KPI health across the organization')
     pie_df = df['Status'].value_counts().reset_index()
     pie_df.columns = ['Status', 'Count']
     st.plotly_chart(px.pie(pie_df, names='Status', values='Count'), use_container_width=True)
 
     st.subheader('🎯 Executive Action Board')
-    st.caption('Priority interventions ranked by business impact')
+    st.caption('AI-prioritized intervention queue for leadership review')
 
     risk_df = df.sort_values('Achievement', ascending=True).head(3)
 
@@ -595,6 +726,9 @@ for question, answer in st.session_state.chat_history:
         st.write(question)
     with st.chat_message('assistant'):
         st.write(answer)
+
+# Remove or comment out any DEBUG dataframe/table output showing raw calculation rows near the top of the page
+# (No such DEBUG output present; nothing to remove.)
 
 st.divider()
 st.success('KPI Copilot Dashboard Running Successfully')
