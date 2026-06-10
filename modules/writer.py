@@ -1,7 +1,6 @@
 import pandas as pd
 from pathlib import Path
 from datetime import datetime
-import ollama
 def generate_ai_recommendations(analysis_df):
     recommendations = []
 
@@ -14,25 +13,6 @@ def generate_ai_recommendations(analysis_df):
         kpi_name = str(row.get("Parameter Name", ""))
 
         try:
-            prompt = (
-                f"KPI: {kpi_name}\n"
-                f"Achievement: {row.get('Achievement %', '')}%\n"
-                f"Status: {status}\n\n"
-                "Provide ONE business recommendation in under 20 words. "
-                "Return only the recommendation sentence."
-            )
-
-            response = ollama.chat(
-                model="qwen3:4b",
-                messages=[{"role": "user", "content": prompt}]
-            )
-
-            recommendation = response["message"]["content"].strip()
-
-            if not recommendation:
-                raise ValueError("Empty response")
-
-        except Exception:
             if status == "Critical":
                 recommendation = "Immediate management review and corrective action required."
             else:
@@ -264,7 +244,7 @@ def write_analysis_sheet(workbook_path, analysis_df):
     ws[f"F{summary_start_row + 7}"].fill = PatternFill("solid", fgColor="1F4E78")
     ws[f"F{summary_start_row + 7}"].font = Font(color="FFFFFF", bold=True)
 
-    # AI Recommendations Sheet (Ollama)
+    # AI Recommendations Sheet
     print("[WRITER] Calculations sheet generated successfully")
     recommendations = generate_ai_recommendations(analysis_df)
 
