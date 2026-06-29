@@ -1,6 +1,7 @@
 
 from pathlib import Path
 from datetime import datetime
+import base64
 import sys
 
 project_root = Path(__file__).resolve().parent.parent
@@ -16,17 +17,80 @@ from modules.writer import write_analysis_sheet
 from utils.kpi_chat_engine import answer_question
 
 st.set_page_config(page_title='KPI Copilot', page_icon='📊', layout='wide')
-st.title('📊 KPI Copilot')
-st.caption('JSW Paints Performance Intelligence Platform')
+
+logo_candidates = [
+    project_root / 'assets' / 'jsw_paints_logo.png',
+    project_root / 'assets' / 'jsw_paints_logo.jpeg',
+    project_root / 'assets' / 'jsw_paints_logo.jpg',
+    project_root / 'dashboard' / 'assets' / 'jsw_paints_logo.png',
+    project_root / 'dashboard' / 'assets' / 'jsw_paints_logo.jpeg',
+    project_root / 'dashboard' / 'assets' / 'jsw_paints_logo.jpg'
+]
+
+logo_path = next((p for p in logo_candidates if p.exists()), None)
+logo_frame_style = (
+    'width:60px;height:60px;border-radius:14px;'
+    'box-shadow:0 0 22px rgba(96,165,250,0.34),'
+    '0 10px 24px rgba(15,23,42,0.45);'
+    'border:1px solid rgba(96,165,250,0.24);'
+    'flex:0 0 60px;'
+)
+logo_html = (
+    f'<div class="hero-logo-fallback" style="{logo_frame_style}'
+    'display:flex;align-items:center;justify-content:center;'
+    'background:rgba(15,23,42,0.55);font-size:34px;">💧</div>'
+)
+
+if logo_path:
+    logo_mime = 'image/png' if logo_path.suffix.lower() == '.png' else 'image/jpeg'
+    logo_base64 = base64.b64encode(logo_path.read_bytes()).decode('ascii')
+    logo_html = (
+        f'<img class="hero-logo" '
+        f'style="{logo_frame_style}object-fit:contain;'
+        'background:rgba(255,255,255,0.96);padding:6px;" '
+        f'src="data:{logo_mime};base64,{logo_base64}" '
+        f'alt="JSW Paints logo" />'
+    )
+
+hero_html = (
+    '<div class="premium-banner hero-banner" '
+    'style="padding:22px 26px;margin-bottom:20px;">'
+    '<div class="hero-banner-content" '
+    'style="position:relative;z-index:1;display:flex;'
+    'align-items:center;gap:18px;">'
+    f'{logo_html}'
+    '<div class="hero-copy" style="min-width:0;">'
+    '<h1 style="margin:0;font-size:3.2rem;line-height:1;'
+    'background:linear-gradient(90deg,#ffffff,#93c5fd,#3b82f6,#1d4ed8);'
+    '-webkit-background-clip:text;-webkit-text-fill-color:transparent;'
+    'text-shadow:0 0 25px rgba(96,165,250,0.35);">'
+    'KPI Copilot</h1>'
+    '<p class="hero-subtitle" '
+    'style="margin:7px 0 0;font-size:1.02rem;color:#94a3b8;">'
+    'JSW Paints Executive Performance Intelligence Platform'
+    '</p>'
+    '<p class="hero-executive-line" '
+    'style="margin:8px 0 0;color:#cbd5e1;font-size:0.98rem;font-weight:500;">'
+    '🚀 Executive Command Center • SAP Analytics • AI Insights'
+    '</p>'
+    '</div>'
+    '</div>'
+    '</div>'
+)
+
+st.markdown(
+    hero_html,
+    unsafe_allow_html=True
+)
 
 st.markdown(
     """
     <style>
     .stApp {
         background:
-            radial-gradient(circle at top right, rgba(59,130,246,0.20), transparent 25%),
-            radial-gradient(circle at bottom left, rgba(249,115,22,0.12), transparent 30%),
-            linear-gradient(180deg,#030712 0%,#0b1220 100%);
+            radial-gradient(circle at top right, rgba(59,130,246,0.20), transparent 28%),
+            radial-gradient(circle at top left, rgba(147,197,253,0.18), transparent 30%),
+            linear-gradient(180deg,#020617 0%,#061427 100%);
     }
 
     .block-container {
@@ -51,13 +115,13 @@ st.markdown(
 
     .premium-banner {
         background: linear-gradient(135deg,
-            rgba(15,23,42,0.96),
-            rgba(17,24,39,0.92));
-        border: 1px solid rgba(59,130,246,0.20);
+            rgba(10,25,49,0.98),
+            rgba(21,43,82,0.95));
+        border: 1px solid rgba(96,165,250,0.35);
         border-radius: 24px;
-        padding: 36px;
+        padding: 24px;
         margin-bottom: 24px;
-        box-shadow: 0 0 40px rgba(59,130,246,0.12);
+        box-shadow: 0 0 70px rgba(59,130,246,0.25);
         position: relative;
         overflow: hidden;
     }
@@ -69,7 +133,7 @@ st.markdown(
         top: 0;
         width: 100%;
         height: 4px;
-        background: linear-gradient(90deg,#2563eb,#7c3aed,#f97316);
+        background: linear-gradient(90deg,#93c5fd,#60a5fa,#2563eb,#1d4ed8,#ef4444);
     }
 
     .premium-banner::after {
@@ -81,9 +145,10 @@ st.markdown(
     }
 
     h1 {
-        background: linear-gradient(90deg,#ffffff,#60a5fa,#f97316);
+        background: linear-gradient(90deg,#ffffff,#bfdbfe,#60a5fa,#2563eb);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 25px rgba(96,165,250,0.35);
     }
 
     div[data-testid="stPlotlyChart"] {
@@ -98,7 +163,7 @@ st.markdown(
         background: linear-gradient(135deg,
             rgba(15,23,42,0.95),
             rgba(30,41,59,0.90));
-        border-left: 5px solid #f97316;
+        border-left: 5px solid #3b82f6;
         border-radius: 18px;
         padding: 18px 22px;
         margin-bottom: 14px;
@@ -108,7 +173,7 @@ st.markdown(
 
     .action-card:hover {
         transform: translateX(6px);
-        box-shadow: 0 0 25px rgba(249,115,22,0.25);
+        box-shadow: 0 0 40px rgba(59,130,246,0.35);
     }
 
     @keyframes scanline {
@@ -150,9 +215,8 @@ st.markdown(
     .health-strip {
         display: flex;
         flex-direction: column;
-        gap: 12px;
-        margin: 18px 0 24px 0;
-        max-width: 260px;
+        gap: 10px;
+        margin: 12px 0 18px 0;
     }
 
     .health-tile {
@@ -163,12 +227,21 @@ st.markdown(
         padding: 18px;
         text-align: center;
         backdrop-filter: blur(14px);
+        transition: all 0.3s ease;
+        animation: pulseGlow 4s ease-in-out infinite;
+        border-left: 3px solid rgba(96,165,250,0.75);
+    }
+
+    .health-tile:hover {
+        transform: translateX(4px);
+        border-color: rgba(96,165,250,0.5);
     }
 
     .health-number {
         font-size: 28px;
         font-weight: 700;
         color: #f4f4f9;
+        text-shadow: 0 0 22px rgba(96,165,250,0.60);
     }
 
     .health-label {
@@ -189,19 +262,57 @@ st.markdown(
     }
 
     @keyframes pulseGlow {
-        0% { box-shadow: 0 0 10px rgba(59,130,246,0.15); }
-        50% { box-shadow: 0 0 30px rgba(249,115,22,0.20); }
-        100% { box-shadow: 0 0 10px rgba(59,130,246,0.15); }
+        0% { box-shadow: 0 0 12px rgba(96,165,250,0.15); }
+        50% { box-shadow: 0 0 38px rgba(59,130,246,0.28); }
+        100% { box-shadow: 0 0 12px rgba(96,165,250,0.15); }
+    }
+
+    img {
+        filter: drop-shadow(0 0 18px rgba(96,165,250,0.35));
     }
 
     /* === BEGIN: Dashboard Glass and Futuristic Section Styles === */
     .dashboard-glass {
-        background: rgba(15,23,42,0.72);
+        background: linear-gradient(135deg, rgba(8,20,39,0.94), rgba(15,35,70,0.82));
         border: 1px solid rgba(96,165,250,0.18);
         border-radius: 22px;
         padding: 18px;
         backdrop-filter: blur(18px);
         box-shadow: 0 0 30px rgba(59,130,246,0.12);
+        transition: all 0.3s ease;
+    }
+
+    .dashboard-glass:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 0 40px rgba(96,165,250,0.18);
+    }
+
+    .executive-score-card {
+        background: linear-gradient(135deg, rgba(15,23,42,0.95), rgba(30,41,59,0.92));
+        border: 1px solid rgba(96,165,250,0.35);
+        border-radius: 22px;
+        padding: 20px;
+        text-align: center;
+        margin-bottom: 18px;
+        position: relative;
+        overflow: hidden;
+    }
+    .executive-score-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, transparent, rgba(37,99,235,0.10), rgba(239,68,68,0.08), transparent);
+    }
+
+    .executive-score-number {
+        font-size: 54px;
+        font-weight: 800;
+        color: #f8fafc;
+        text-shadow: 0 0 25px rgba(96,165,250,0.55);
+    }
+
+    .health-bar {
+        margin: 10px 0;
     }
 
     .futuristic-section {
@@ -248,37 +359,13 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.markdown(
-    """
-    <div class="premium-banner">
-        <h2>JSW Paints Executive Command Center</h2>
-        <p>Real-time KPI Intelligence • SAP Analytics • Executive Decision Support</p>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
 
-# === Futuristic Section below page title ===
-st.markdown(
-    '''
-    <div class="futuristic-section">
-        <h2 style="margin-bottom:8px;">JSW Paints KPI Intelligence Hub</h2>
-        <p style="color:#cbd5e1;">Real-time performance analytics • AI-powered monitoring • Executive command center</p>
-    </div>
-    ''',
-    unsafe_allow_html=True
-)
 
-st.markdown(
-    """
-    <div class="jsw-health-banner">
-        🚀 LIVE EXECUTIVE COMMAND CENTER • JSW PAINTS KPI COPILOT • REAL-TIME SAP ANALYTICS • AI INSIGHTS ACTIVE
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+
+
 
 workbook_path = project_root / 'reports' / 'kpi_target_tracker.xlsx'
+
 
 # ── Download button ──────────────────────────────────────────────────────────
 if workbook_path.exists():
@@ -288,6 +375,32 @@ if workbook_path.exists():
             f.read(),
             file_name='kpi_target_tracker.xlsx'
         )
+
+# ── SAP Connection Status ───────────────────────────────────────────────────
+try:
+    upload_log_df = pd.read_excel(
+        workbook_path,
+        sheet_name='SAP Upload Log'
+    )
+
+    if not upload_log_df.empty:
+        latest_upload = upload_log_df.iloc[-1]
+
+        sap_col1, sap_col2 = st.columns([1, 1])
+
+        with sap_col1:
+            st.info(
+                f"🟢 SAP Connected\n\n"
+                f"Last Upload: {latest_upload['Timestamp']}"
+            )
+
+        with sap_col2:
+            st.info(
+                f"📄 {latest_upload['Filename']}\n\n"
+                f"Rows Updated: {latest_upload['Rows Updated']}"
+            )
+except Exception:
+    pass
 
 # ── KPI summary from Calculations sheet ─────────────────────────────────────
 try:
@@ -316,7 +429,31 @@ try:
     df['Status'] = calc_df[status_col].astype(str) if status_col else 'Unknown'
     df = df.dropna(subset=['Achievement']).reset_index(drop=True)
 
+    # Load KPI ownership from Settings sheet if available
+    owner_map = {}
+    try:
+        settings_df = pd.read_excel(workbook_path, sheet_name='Settings')
+        owner_col = next(
+            (c for c in settings_df.columns if 'owner' in str(c).lower()),
+            None
+        )
+        kpi_name_col = next(
+            (c for c in settings_df.columns if 'kpi' in str(c).lower() or 'parameter' in str(c).lower()),
+            settings_df.columns[0]
+        )
+
+        if owner_col:
+            owner_map = dict(
+                zip(
+                    settings_df[kpi_name_col].astype(str).str.strip(),
+                    settings_df[owner_col].astype(str).str.strip()
+                )
+            )
+    except Exception:
+        owner_map = {}
+
 except Exception:
+    owner_map = {}
     df = pd.DataFrame(columns=['KPI', 'Achievement', 'Status'])
 
 # ── Dashboard metrics ────────────────────────────────────────────────────────
@@ -341,31 +478,13 @@ if not df.empty:
     col3.metric('🟢 On Track', int(on_track.sum()))
     col4.metric('🔴 Critical', int(critical_count))
 
-    green = int(on_track.sum())
-    yellow = int(monitor_count)
-    red = int(critical_count)
-
-    st.markdown(
-        f'''
-        <div class="health-strip">
-            <div class="health-tile">
-                <div class="health-number">{green}</div>
-                <div class="health-label">🟢 On Track</div>
-            </div>
-            <div class="health-tile">
-                <div class="health-number">{yellow}</div>
-                <div class="health-label">🟡 Monitor</div>
-            </div>
-            <div class="health-tile">
-                <div class="health-number">{red}</div>
-                <div class="health-label">🔴 Critical</div>
-            </div>
-        </div>
-        ''',
-        unsafe_allow_html=True
+    total_kpis = max(len(df), 1)
+    executive_score = int(
+        ((green if 'green' in locals() else int(on_track.sum())) * 100 +
+         monitor_count * 60 +
+         critical_count * 20) / total_kpis
     )
-
-    left, right = st.columns([2, 1])
+    left, right = st.columns([3, 1])
 
     # --- KPI Performance Chart (glass style) ---
     with left:
@@ -377,15 +496,52 @@ if not df.empty:
             y='Achievement'
         )
         fig.update_traces(marker_line_width=0)
+        fig.update_traces(
+            marker_color='#3b82f6'
+        )
         fig.update_layout(height=520, margin=dict(l=20, r=20, t=20, b=80))
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
         st.markdown('</div>', unsafe_allow_html=True)
 
     # --- Current Status DataFrame (glass style) ---
     with right:
         st.markdown('<div class="dashboard-glass">', unsafe_allow_html=True)
+        st.markdown(
+            f'''
+            <div class="executive-score-card">
+                <div style="color:#94a3b8;font-size:0.9rem;">EXECUTIVE HEALTH SCORE</div>
+                <div class="executive-score-number">{executive_score}</div>
+                <div style="color:#cbd5e1;">Overall KPI Performance</div>
+            </div>
+            ''',
+            unsafe_allow_html=True
+        )
         st.subheader('🚦 Real-Time KPI Status Matrix')
         st.caption('Live KPI monitoring • AI anomaly detection • Executive alerting')
+
+        green = int(on_track.sum())
+        yellow = int(monitor_count)
+        red = int(critical_count)
+
+        st.markdown(
+            f'''
+            <div class="health-strip">
+                <div class="health-tile">
+                    <div class="health-label">🟢 ON TRACK</div>
+                    <div class="health-number">{green}</div>
+                </div>
+                <div class="health-tile">
+                    <div class="health-label">🟡 MONITOR</div>
+                    <div class="health-number">{yellow}</div>
+                </div>
+                <div class="health-tile">
+                    <div class="health-label">🔴 CRITICAL</div>
+                    <div class="health-number">{red}</div>
+                </div>
+            </div>
+            ''',
+            unsafe_allow_html=True
+        )
 
         traffic_df = df[['KPI', 'Achievement', 'Status']].copy()
 
@@ -401,7 +557,7 @@ if not df.empty:
 
         st.dataframe(
             traffic_df,
-            use_container_width=True,
+            width='stretch',
             hide_index=True
         )
         st.markdown('</div>', unsafe_allow_html=True)
@@ -411,7 +567,19 @@ if not df.empty:
     st.caption('Executive visibility into KPI health across the organization')
     pie_df = df['Status'].value_counts().reset_index()
     pie_df.columns = ['Status', 'Count']
-    st.plotly_chart(px.pie(pie_df, names='Status', values='Count'), use_container_width=True)
+    donut_fig = px.pie(
+        pie_df,
+        names='Status',
+        values='Count',
+        hole=0.65
+    )
+
+    donut_fig.update_layout(
+        height=420,
+        annotations=[dict(text=f'{len(df)}<br>KPIs', showarrow=False, font_size=22)]
+    )
+
+    st.plotly_chart(donut_fig, width='stretch')
 
     st.subheader('🎯 Executive Action Board')
     st.caption('AI-prioritized intervention queue for leadership review')
@@ -419,17 +587,32 @@ if not df.empty:
     risk_df = df.sort_values('Achievement', ascending=True).head(3)
 
     for _, row in risk_df.iterrows():
+        owner = owner_map.get(str(row['KPI']).strip(), 'Unassigned')
+
         st.markdown(
             f'''
             <div class="action-card">
                 <div class="action-title">🚨 {row['KPI']}</div>
                 <div class="action-subtitle">
-                    Immediate management intervention recommended • Current Achievement: {row['Achievement']:.1f}%
+                    <strong>Owner:</strong> {owner}<br>
+                    <strong>Achievement:</strong> {row['Achievement']:.1f}%<br>
+                    <strong>Priority:</strong> High<br><br>
+                    Immediate management intervention recommended.
                 </div>
             </div>
             ''',
             unsafe_allow_html=True
         )
+
+if owner_map:
+    st.subheader('👥 KPI Ownership Directory')
+
+    owner_df = pd.DataFrame(
+        sorted(owner_map.items()),
+        columns=['KPI', 'Owner']
+    )
+
+    st.dataframe(owner_df, width='stretch', hide_index=True)
 
 st.divider()
 
@@ -504,7 +687,7 @@ if sap_file:
             else pd.read_excel(sap_file)
         )
         with st.expander('📄 View SAP Upload Preview'):
-            st.dataframe(sap_df.head(), use_container_width=True)
+            st.dataframe(sap_df.head(), width='stretch')
 
         # ── Auto-detect SAP columns ──────────────────────────────────────────
         sap_kpi_col = next(
@@ -530,7 +713,7 @@ if sap_file:
         st.subheader('KPI Match Preview')
         preview_df = sap_df[[sap_kpi_col, sap_value_col]].head(10).copy()
         preview_df.columns = ['KPI', 'Value']
-        st.dataframe(preview_df, use_container_width=True)
+        st.dataframe(preview_df, width='stretch')
 
         if st.button('🚀 Auto Update KPI Workbook'):
             try:
@@ -650,11 +833,11 @@ if sap_file:
                     st.error('❌ 0 rows updated.')
 
                 if match_log:
-                    st.dataframe(pd.DataFrame(match_log), use_container_width=True)
+                    st.dataframe(pd.DataFrame(match_log), width='stretch')
 
                 if unmatched_kpis:
                     st.error('Unmatched rows:')
-                    st.dataframe(pd.DataFrame(unmatched_kpis), use_container_width=True)
+                    st.dataframe(pd.DataFrame(unmatched_kpis), width='stretch')
 
                 st.rerun()
 

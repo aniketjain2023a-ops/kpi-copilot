@@ -3,17 +3,41 @@ import pandas as pd
 import plotly.express as px
 from pathlib import Path
 
-st.title('📊 KPI Dashboard')
+st.set_page_config(page_title="KPI Dashboard", layout="wide")
+
+st.markdown("""
+<style>
+.block-container {padding-top:1rem; padding-bottom:1rem;}
+div[data-testid="stMetric"] {
+    background:#0f172a;
+    border:1px solid rgba(59,130,246,.25);
+    border-radius:16px;
+    padding:14px;
+}
+</style>
+""", unsafe_allow_html=True)
 
 # Set up paths
 project_root = Path(__file__).resolve().parents[2]
 workbook_path = project_root / 'reports' / 'kpi_target_tracker.xlsx'
 
+left, right = st.columns([5,1])
+with left:
+    st.title("📊 KPI Copilot")
+    st.caption("Executive Performance Dashboard")
+with right:
+    if workbook_path.exists():
+        with open(workbook_path, "rb") as f:
+            st.download_button(
+                "📥 Excel",
+                f.read(),
+                file_name="kpi_target_tracker.xlsx",
+                use_container_width=True,
+            )
+
 # Try loading the Calculations sheet
 try:
     calc_df = pd.read_excel(workbook_path, sheet_name='Calculations', header=None)
-    st.write('DEBUG - First 20 rows from Calculations sheet')
-    st.dataframe(calc_df.head(20), width='stretch')
     # Find the header row containing 'Parameter'
     header_row = None
     for idx, row in calc_df.iterrows():
@@ -90,15 +114,21 @@ if not kpi_df.empty:
     needs_attention = (
         kpi_df['Status'].astype(str).str.lower().isin(['monitor', 'critical'])
     ).sum()
-    col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Total KPIs", total_kpis)
-    col2.metric("Average Achievement", f"{avg_achievement:.1f}%" if pd.notnull(avg_achievement) else "N/A")
+    monitor = (kpi_df['Status'].astype(str).str.lower() == 'monitor').sum()
+    critical = (kpi_df['Status'].astype(str).str.lower() == 'critical').sum()
+    health = round((on_track / total_kpis) * 100) if total_kpis else 0
+
+    col1, col2, col3, col4, col5, col6 = st.columns(6)
+    col1.metric("KPIs", total_kpis)
+    col2.metric("Avg %", f"{avg_achievement:.1f}%" if pd.notnull(avg_achievement) else "N/A")
     col3.metric("On Track", on_track)
-    col4.metric("Needs Attention", needs_attention)
+    col4.metric("Monitor", monitor)
+    col5.metric("Critical", critical)
+    col6.metric("Health", f"{health}%")
 
     st.markdown("---")
 
-    left, right = st.columns(2)
+    left, right = st.columns([2,1])
     with left:
         fig = px.bar(
             kpi_df,
@@ -110,6 +140,8 @@ if not kpi_df.empty:
             text='Achievement',
         )
         fig.update_layout(xaxis_title='', yaxis_title='Achievement (%)', showlegend=True)
+        fig.update_layout(height=430)
+        fig.update_traces(texttemplate="%{text:.1f}%", textposition="outside")
         left.plotly_chart(fig, use_container_width=True)
     with right:
         st.subheader("Current Status")
@@ -132,9 +164,3 @@ else:
     st.info("No KPI data available to display.")
 
 st.markdown("---")
-with open(workbook_path, 'rb') as f:
-    st.download_button(
-        '📥 Download Updated Excel',
-        f.read(),
-        file_name='kpi_target_tracker.xlsx'
-    )
